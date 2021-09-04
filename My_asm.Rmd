@@ -1,0 +1,124 @@
+---
+title: "STAT2011 COMP_ASM"
+author: "Timothy"
+date: "5/26/2021"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Question 1.
+(a).
+```{r}
+set.seed(200)
+n = 10
+Times = (10)^4
+
+# By row
+a = replicate(Times, sum(sample(1:6, n, replace = TRUE)) >= 40)
+mean(a)
+```
+The approximate probability is **0.1998**
+
+(b).
+```{r}
+E_Y = 35
+VAR_Y = 175/6
+P = 1 - pnorm(40, E_Y, sqrt(VAR_Y))
+round(P,4)
+```
+The Central Limit Theorem approximation of the probability of winning the game without continuity correction is 0.1773. This is lower than the Monte Carlo approximation obtained in (a).
+
+
+(c).
+
+```{r}
+1 - pnorm(39.5, E_Y, sqrt(VAR_Y))
+```
+
+The Central Limit Theorem approximation of the probability of winning the game with continuity correction is 0.2024. This is slightly higher than the Monte Carlo approximation obtained in (a).
+
+
+# Question 2.
+
+(a)
+
+```{r}
+x = 0:4
+FREQ = c(130, 133, 49, 7, 1)
+xbar = sum(x*FREQ) / sum(FREQ)
+phat = xbar / 4
+phat
+```
+
+The estimate of $p$ using the method of moments is **0.2**.
+
+
+(b)
+```{r}
+e = round(dbinom(x, 4, phat) * sum(FREQ))
+e
+```
+
+(c)
+```{r}
+sr = (FREQ - e) / sqrt(e)
+abs(sr)
+```
+
+All SR in absolute are less than 2, so the fitted binomial model is a good model for the data.
+
+
+# Question 3.
+(a)
+```{r}
+set.seed(100)
+
+
+n = 25
+mu = 3
+sigma = 1.5
+
+x = rnorm(n, mu, sigma)
+
+mean(x) + c(Lower = -1, Upper = 1) * qnorm(0.975) * sigma/sqrt(n)
+```
+
+(b)
+```{r}
+m = 20
+
+x.mat = matrix(rnorm(n*m, mu, sigma), n)
+xbar.vec = colMeans(x.mat)
+lower = xbar.vec - qnorm(0.975) * sigma/sqrt(n)
+upper = xbar.vec + qnorm(0.975) * sigma/sqrt(n) 
+sum((lower <= mu) & (mu <= upper))
+```
+
+The number of these 20 intervals contain the true mean $\mu = 3$ is 19.
+
+
+# Question 4.
+(a)
+```{r}
+set.seed(100)
+size = 30
+lambda = 2
+N = 1000
+
+
+xbar = replicate(N, mean(rexp(size, lambda)))
+hist(xbar, 30, prob = TRUE)
+```
+
+(b)
+```{r}
+
+hist(xbar, 30, prob = TRUE)
+
+curve(dnorm(x, 1/lambda, sqrt(1/lambda^2/n)), add = TRUE, col = 'blue')
+```
+
+We can see the histogram of these 1000 means is roughly consistent with a normal density curve, so the Central Limit Theorem gives a good approximation for the distribution of the means.
+
+
